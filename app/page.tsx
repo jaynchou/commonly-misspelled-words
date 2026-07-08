@@ -18,11 +18,7 @@ export default function HomePage() {
       <section className="container hero">
         <div className="hero-copy">
           <span className="kicker">Typofind.com</span>
-          <h1>TypoFind: Official Free Daily Misspelled Words Quiz Game</h1>
-          <p className="deck">
-            A daily commonly misspelled words quiz inspired by dictionary and encyclopedia reference lists to help you
-            correct words.
-          </p>
+          <h1 className="hero-line">TypoFind: A Commonly Misspelled Words Quiz Game</h1>
         </div>
       </section>
 

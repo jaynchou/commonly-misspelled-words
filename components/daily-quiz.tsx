@@ -3,6 +3,7 @@
 import { CheckCircle2, Clock3, Play } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Leaderboard } from "@/components/leaderboard";
+import { ResetCountdown } from "@/components/reset-countdown";
 import type { WordEntry } from "@/lib/words";
 
 type AnswerRecord = {
@@ -114,11 +115,11 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
         <div className="quiz-top">
           <div>
             <span className="eyebrow">Daily challenge {challengeId}</span>
-            <h2>{isDone ? "Score filed?" : "Find the correct spelling."}</h2>
+            <h2 className="quiz-title">{isDone ? "Score filed?" : "Find the correct spelling."}</h2>
           </div>
-          <div className="note">
+          {started ? <div className="note">
             <Clock3 size={16} aria-hidden /> {started ? formatTime(elapsed) : "20 questions"}
-          </div>
+          </div> : null}
         </div>
 
         <div className="progress" aria-label="Challenge progress">
@@ -127,11 +128,7 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
 
         {!started ? (
           <div className="start-panel">
-            <p className="quiz-word">Proofread today&apos;s desk.</p>
-            <p>
-              A daily commonly misspelled words quiz inspired by dictionary and encyclopedia reference lists to help you
-              correct words.
-            </p>
+            <p className="quiz-word">Ready for today&apos;s spelling challenge?</p>
             <button className="primary-button start-button" type="button" onClick={start}>
               <Play size={18} /> Start today&apos;s quiz
             </button>
@@ -193,8 +190,9 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
       <aside className="leaderboard-card">
         <div className="section-header compact">
           <div>
-            <span className="eyebrow">Today</span>
+            <span className="live-label">Live</span>
             <h3>Leaderboard</h3>
+            <ResetCountdown />
           </div>
         </div>
         <Leaderboard challengeId={challengeId} refreshKey={refreshKey} />
