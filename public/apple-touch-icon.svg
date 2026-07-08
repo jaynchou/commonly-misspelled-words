@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="TypoFind icon">
+  <rect width="180" height="180" rx="38" fill="#f7f3ea"/>
+  <rect x="24" y="24" width="132" height="132" rx="18" fill="none" stroke="#1f1b16" stroke-width="8"/>
+  <path d="M43 51h84v20H96v66H74V71H43z" fill="#1f1b16"/>
+  <circle cx="119" cy="119" r="23" fill="none" stroke="#8d2f22" stroke-width="12"/>
+  <path d="M137 137l18 18" stroke="#8d2f22" stroke-width="12" stroke-linecap="round"/>
+</svg>
