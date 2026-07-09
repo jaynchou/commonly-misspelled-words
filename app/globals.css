@@ -5,11 +5,13 @@
   --ink: #1f1b16;
   --muted: #746b60;
   --line: #d2c4ad;
-  --accent: #8d2f22;
+  --accent: #b42a20;
   --accent-ink: #fff9f4;
   --panel: #fbf4e8;
   --shadow: 0 14px 42px rgb(57 38 20 / 0.08);
-  --ui-font: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --display-font: "Cooper Black", Cooper, "Bookman Old Style", Bookman, "Rockwell Extra Bold", Rockwell, Georgia, serif;
+  --body-font: "Century Schoolbook", "Bookman Old Style", Georgia, "Iowan Old Style", serif;
+  --ui-font: "Rockwell", "Bookman Old Style", Georgia, serif;
 }
 
 [data-theme="dark"] {
@@ -19,7 +21,7 @@
   --ink: #f0e9db;
   --muted: #b7aa98;
   --line: #3d352a;
-  --accent: #d67b5f;
+  --accent: #e24f38;
   --accent-ink: #20130f;
   --panel: #1d1a15;
   --shadow: 0 18px 60px rgb(0 0 0 / 0.28);
@@ -99,7 +101,7 @@ body {
     linear-gradient(112deg, transparent 0 46%, rgb(91 62 30 / 0.02) 46.4%, transparent 47.2%),
     radial-gradient(ellipse at center, transparent 0 58%, rgb(92 61 28 / 0.12) 100%),
     var(--paper);
-  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  font-family: var(--body-font);
 }
 
 body::before {
@@ -168,6 +170,7 @@ input {
 }
 
 .brand-mark span {
+  font-family: var(--display-font);
   font-size: 1.5rem;
 }
 
@@ -176,13 +179,17 @@ input {
   right: 7px;
   bottom: 5px;
   color: var(--accent);
+  font-family: var(--display-font);
   font-size: 1rem;
   font-style: italic;
 }
 
 .brand strong {
   display: block;
+  font-family: var(--display-font);
   font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
 }
 
 .brand small,
@@ -242,13 +249,13 @@ nav a:hover,
   border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-ink);
-  font-family: var(--ui-font);
+  font-family: var(--display-font);
   font-weight: 700;
 }
 
 .secondary-button {
   padding: 0 18px;
-  font-family: var(--ui-font);
+  font-family: var(--display-font);
   font-weight: 700;
 }
 
@@ -338,6 +345,9 @@ h1,
 h2,
 h3 {
   margin: 0;
+  font-family: var(--display-font);
+  font-weight: 900;
+  letter-spacing: 0.005em;
   text-wrap: balance;
 }
 
@@ -348,11 +358,19 @@ h1 {
 }
 
 .hero-line {
+  display: grid;
+  gap: 2px;
   max-width: none;
-  overflow: hidden;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  line-height: 1.12;
-  text-overflow: ellipsis;
+  line-height: 1.04;
+  text-shadow: 0.035em 0.035em 0 color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.hero-line span:first-child {
+  font-size: clamp(2.15rem, 4.8vw, 4.8rem);
+}
+
+.hero-line span:last-child {
+  font-size: clamp(1.4rem, 2.6vw, 2.55rem);
   white-space: nowrap;
 }
 
@@ -360,7 +378,7 @@ h1 {
   max-width: 100%;
   overflow-wrap: normal;
   font-size: clamp(1.35rem, 2vw, 1.95rem);
-  line-height: 1.04;
+  line-height: 1.02;
   white-space: normal;
 }
 
@@ -418,6 +436,7 @@ p {
 
 .stat b {
   display: block;
+  font-family: var(--display-font);
   font-size: 1.7rem;
   font-variant-numeric: tabular-nums;
 }
@@ -453,6 +472,8 @@ p {
 
 .quiz-word {
   margin: 18px 0 8px;
+  font-family: var(--display-font);
+  font-weight: 900;
   font-size: clamp(1.35rem, 1.9vw, 1.95rem);
   line-height: 1.06;
 }
@@ -530,6 +551,33 @@ p {
   width: 42px;
   min-width: 42px;
   padding: 0;
+  animation: share-press-pulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.share-icon-button:hover,
+.share-icon-button:focus-visible {
+  animation-play-state: paused;
+  transform: scale(1.05);
+}
+
+@keyframes share-press-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  45% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-icon-button {
+    animation: none;
+  }
 }
 
 .answer-review {
@@ -715,7 +763,7 @@ p {
 .share-cta {
   border: 1px solid rgb(255 250 241 / 0.2);
   border-radius: 10px;
-  background: #9f2f23;
+  background: var(--accent);
   padding: 16px;
   font-size: 1.25rem;
   font-weight: 700;
@@ -872,6 +920,7 @@ p {
   border: 1px solid var(--accent);
   border-radius: 50%;
   color: var(--accent);
+  font-family: var(--display-font);
   font-variant-numeric: tabular-nums;
 }
 
@@ -913,6 +962,15 @@ p {
 
 .panel {
   padding: 20px;
+}
+
+.panel h3 {
+  font-size: 1.18rem;
+  line-height: 1.16;
+}
+
+.panel p {
+  font-size: 1rem;
 }
 
 .leaderboard-card {
@@ -969,6 +1027,27 @@ p {
   height: 7px;
   border-radius: 50%;
   background: var(--accent);
+  animation: live-ink-pulse 1.55s ease-in-out infinite;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+@keyframes live-ink-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-label::before {
+    animation: none;
+  }
 }
 
 .reset-countdown {
@@ -1057,6 +1136,14 @@ p {
 
 .article {
   max-width: 880px;
+}
+
+.content-page > .article {
+  margin: 0 auto;
+}
+
+.content-grid .article {
+  margin: 0;
 }
 
 .article h1 {
@@ -1389,6 +1476,25 @@ p {
     width: 100%;
   }
 
+  .finish-actions .form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 42px;
+    align-items: center;
+  }
+
+  .finish-actions .form-row input {
+    grid-column: 1 / -1;
+  }
+
+  .finish-actions .form-row .primary-button {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  .finish-actions .form-row .share-icon-button {
+    grid-column: 2;
+  }
+
   .finish-note {
     white-space: normal;
   }
@@ -1403,11 +1509,8 @@ p {
   }
 
   .share-card {
+    gap: 14px;
     padding: 20px;
-  }
-
-  .share-score-row {
-    grid-template-columns: 1fr;
   }
 
   .share-tools,
@@ -1420,8 +1523,16 @@ p {
   }
 
   .hero-line {
-    font-size: clamp(1.08rem, 4.4vw, 1.45rem);
     white-space: normal;
+  }
+
+  .hero-line span:first-child {
+    font-size: clamp(1.9rem, 10vw, 3.1rem);
+  }
+
+  .hero-line span:last-child {
+    font-size: clamp(0.86rem, 4vw, 1.28rem);
+    white-space: nowrap;
   }
 
   .start-panel {
@@ -1442,6 +1553,18 @@ p {
   .grid-3,
   .stats-row {
     grid-template-columns: 1fr;
+  }
+
+  .panel h3,
+  .how-card h3 {
+    font-size: clamp(1.15rem, 5.4vw, 1.55rem);
+    line-height: 1.12;
+  }
+
+  .panel p,
+  .how-card p {
+    font-size: clamp(0.98rem, 4.2vw, 1.08rem);
+    line-height: 1.58;
   }
 
   .example-choices {
@@ -1518,13 +1641,32 @@ p {
   }
 
   .hero-line {
-    font-size: clamp(1rem, 5vw, 1.28rem);
+    gap: 4px;
+  }
+
+  .hero-line span:first-child {
+    font-size: clamp(1.75rem, 9vw, 2.55rem);
+  }
+
+  .hero-line span:last-child {
+    font-size: clamp(0.78rem, 3.8vw, 1.08rem);
+    white-space: nowrap;
   }
 
   .quiz-shell,
   .leaderboard-card,
   .panel {
     padding: 14px;
+  }
+
+  .panel h3,
+  .how-card h3 {
+    font-size: clamp(1.08rem, 5vw, 1.36rem);
+  }
+
+  .panel p,
+  .how-card p {
+    font-size: 0.98rem;
   }
 
   .quiz-title {
@@ -1565,5 +1707,77 @@ p {
   .faq-item p {
     padding: 0 14px 16px 34px;
     font-size: 0.95rem;
+  }
+
+  .share-modal {
+    padding: 18px 12px;
+  }
+
+  .share-modal h2 {
+    font-size: clamp(1.25rem, 7vw, 1.85rem);
+  }
+
+  .share-subtitle {
+    margin-bottom: 14px;
+    font-size: 0.82rem;
+  }
+
+  .share-card {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .share-card .eyebrow {
+    font-size: 0.68rem;
+  }
+
+  .share-card h3 {
+    margin-top: 2px;
+    font-size: clamp(1.35rem, 8vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .share-card p {
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  .share-score-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-radius: 8px;
+  }
+
+  .share-score-row div {
+    gap: 2px;
+    min-width: 0;
+    padding: 9px 7px;
+  }
+
+  .share-score-row span,
+  .share-score-row small {
+    overflow-wrap: anywhere;
+    font-size: 0.54rem;
+    letter-spacing: 0.02em;
+  }
+
+  .share-score-row strong {
+    font-size: clamp(1.35rem, 8vw, 1.95rem);
+  }
+
+  .share-words {
+    gap: 6px;
+  }
+
+  .share-words span {
+    padding: 5px 8px;
+    font-size: 0.68rem;
+    line-height: 1;
+  }
+
+  .share-cta {
+    padding: 11px 10px;
+    border-radius: 8px;
+    font-size: clamp(0.98rem, 5vw, 1.2rem);
   }
 }

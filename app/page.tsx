@@ -18,8 +18,10 @@ export default function HomePage() {
     <>
       <section className="container hero">
         <div className="hero-copy">
-          <span className="kicker">Typofind.com</span>
-          <h1 className="hero-line">TypoFind: A Commonly Misspelled Words Quiz Game</h1>
+          <h1 className="hero-line">
+            <span>TypoFind</span>
+            <span>A Commonly Misspelled Words Quiz Game</span>
+          </h1>
         </div>
       </section>
 
