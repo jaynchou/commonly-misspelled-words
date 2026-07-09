@@ -287,14 +287,14 @@ h1 {
 .quiz-title {
   max-width: 100%;
   overflow-wrap: normal;
-  font-size: clamp(1.7rem, 3.4vw, 3.15rem);
+  font-size: clamp(1.35rem, 2vw, 1.95rem);
   line-height: 1.04;
   white-space: normal;
 }
 
 h2 {
-  font-size: clamp(2rem, 4vw, 4rem);
-  line-height: 0.95;
+  font-size: clamp(1.45rem, 2vw, 2.25rem);
+  line-height: 1.08;
 }
 
 h3 {
@@ -313,24 +313,21 @@ p {
 }
 
 .challenge-band {
-  padding: 10px 0 28px;
+  padding: 4px 0 22px;
 }
 
 .play-layout {
   display: grid;
-  grid-template-columns:
-    minmax(14px, 1fr)
-    minmax(0, 1280px)
-    minmax(300px, 360px)
-    minmax(14px, 1fr);
-  gap: 20px;
-  align-items: start;
-  width: 100%;
+  grid-template-columns: minmax(0, 620px) 220px;
+  gap: 14px;
+  align-items: stretch;
+  width: min(854px, calc(100% - 28px));
+  margin: 0 auto;
   min-width: 0;
 }
 
 .play-layout > .quiz-shell {
-  grid-column: 2;
+  grid-column: 1;
 }
 
 .stats-row {
@@ -363,7 +360,7 @@ p {
 
 .quiz-shell {
   min-width: 0;
-  padding: 24px;
+  padding: 16px;
 }
 
 .quiz-top {
@@ -381,25 +378,27 @@ p {
 }
 
 .quiz-word {
-  margin: 22px 0 8px;
-  font-size: clamp(1.65rem, 3vw, 3rem);
-  line-height: 1.02;
+  margin: 18px 0 8px;
+  font-size: clamp(1.35rem, 1.9vw, 1.95rem);
+  line-height: 1.06;
 }
 
 .choices {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 260px));
+  justify-content: center;
+  gap: 12px 14px;
 }
 
 .choice {
   width: 100%;
-  padding: 15px 16px;
+  min-height: 48px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: transparent;
   color: var(--ink);
-  text-align: left;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -421,20 +420,27 @@ p {
 .quiz-actions,
 .form-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   margin-top: 18px;
 }
 
 .form-row input {
   min-width: 0;
-  flex: 1;
+  flex: 0 1 280px;
   min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--paper);
   color: var(--ink);
   padding: 0 16px;
+}
+
+.finish-note {
+  margin-bottom: 0;
+  max-width: none;
+  font-size: 1rem;
+  white-space: nowrap;
 }
 
 .form-error {
@@ -459,17 +465,17 @@ p {
 
 .start-panel {
   display: grid;
-  min-height: 190px;
+  min-height: 132px;
   align-content: center;
-  justify-items: center;
-  text-align: center;
+  justify-items: start;
+  text-align: left;
 }
 
 .start-button {
-  min-width: min(300px, 100%);
-  min-height: 56px;
+  min-width: min(210px, 100%);
+  min-height: 42px;
   margin-top: 12px;
-  font-size: 1.08rem;
+  font-size: 0.9rem;
 }
 
 .timer-row {
@@ -493,7 +499,7 @@ p {
 }
 
 .section {
-  padding: 46px 0;
+  padding: 32px 0;
 }
 
 .section-header {
@@ -533,15 +539,38 @@ p {
 }
 
 .leaderboard-card {
-  grid-column: 3;
-  align-self: start;
+  grid-column: 2;
+  align-self: stretch;
   position: sticky;
   top: 92px;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
   box-shadow: var(--shadow);
-  padding: 18px;
+  padding: 12px;
+}
+
+.leaderboard-card h3 {
+  font-size: 1.18rem;
+  line-height: 1.05;
+}
+
+@media (max-width: 1120px) {
+  .play-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .play-layout > .quiz-shell,
+  .leaderboard-card {
+    grid-column: 1;
+  }
+
+  .leaderboard-card {
+    position: static;
+  }
 }
 
 .live-label {
@@ -565,17 +594,25 @@ p {
 
 .reset-countdown {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--muted);
   font-family: var(--ui-font);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   line-height: 1.4;
 }
 
 .leaderboard-scroll {
-  max-height: 292px;
+  max-height: 220px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 5px;
+  scrollbar-color: var(--accent) color-mix(in srgb, var(--line) 65%, transparent);
+  scrollbar-width: thin;
+}
+
+.leaderboard-card .leaderboard-scroll {
+  flex: 0 1 auto;
+  max-height: 312px;
+  min-height: 0;
 }
 
 .leaderboard-table,
@@ -596,7 +633,15 @@ p {
 
 .leaderboard-table th,
 .leaderboard-table td {
-  padding: 10px 6px;
+  padding: 7px 4px;
+  font-size: 0.76rem;
+}
+
+.leaderboard-more {
+  margin: 8px 0 0;
+  font-family: var(--ui-font);
+  font-size: 0.7rem;
+  line-height: 1.3;
 }
 
 .leaderboard-table td:nth-child(3),
@@ -642,7 +687,8 @@ p {
 
 .article h2 {
   margin-top: 42px;
-  font-size: clamp(1.8rem, 3vw, 3.2rem);
+  font-size: clamp(1.5rem, 2.2vw, 2.35rem);
+  line-height: 1.08;
 }
 
 .leaderboard-page {
@@ -818,17 +864,8 @@ p {
   padding-top: 22px;
 }
 
-.footer-mini-mark {
-  display: grid;
+.footer-brand-mark {
   flex: 0 0 auto;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  color: var(--ink);
-  font-size: 0.78rem;
-  font-weight: 700;
 }
 
 .footer-bottom p {
@@ -912,6 +949,21 @@ p {
 
   .choices {
     grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-row input {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .finish-note {
+    white-space: normal;
   }
 
   .hero-copy {
@@ -925,6 +977,8 @@ p {
 
   .start-panel {
     min-height: 170px;
+    justify-items: center;
+    text-align: center;
   }
 
   .start-button {

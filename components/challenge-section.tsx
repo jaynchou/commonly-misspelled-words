@@ -16,7 +16,7 @@ export function ChallengeSection({ words, challengeId }: { words: WordEntry[]; c
         <div className="section-header compact">
           <div>
             <span className="live-label">Live</span>
-            <h3>Leaderboard</h3>
+            <h3>Top Typo Finders</h3>
             <ResetCountdown />
           </div>
         </div>

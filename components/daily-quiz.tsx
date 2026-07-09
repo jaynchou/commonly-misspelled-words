@@ -178,15 +178,12 @@ export function DailyQuiz({
         ) : (
           <>
             <p className="quiz-word">{score.toFixed(1)}/10</p>
-            <p>
-              Finished in {formatTime(elapsed)}. Add your name once, then Typofind records the result on today&apos;s
-              leaderboard.
-            </p>
+            <p className="finish-note">Finished in {formatTime(elapsed)}. Add a name to rank on today&apos;s leaderboard.</p>
             <div className="form-row">
               <input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                placeholder="Your byline"
+                placeholder="Rank my name"
                 aria-label="Leaderboard name"
                 disabled={saved}
               />

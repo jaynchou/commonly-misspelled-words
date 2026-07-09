@@ -54,7 +54,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </span>
             <span>
               <strong>TypoFind</strong>
-              <small>Daily typo quiz</small>
             </span>
           </Link>
           <nav className="desktop-nav" aria-label="Primary navigation">
@@ -77,13 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
           </nav>
-          <div className="footer-label">Daily spelling desk</div>
           <div className="footer-bottom">
-            <Link href="/" className="footer-mini-mark" aria-label="TypoFind home">
-              Tf
+            <Link href="/" className="brand-mark footer-brand-mark" aria-label="TypoFind home">
+              <span>T</span>
+              <i>f</i>
             </Link>
             <p>
-              TypoFind — a free daily misspelled words quiz for sharper proofreading.
+              TypoFind - a free daily misspelled words quiz for sharper proofreading.
             </p>
           </div>
         </footer>
