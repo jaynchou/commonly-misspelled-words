@@ -9,6 +9,28 @@ type Stats = {
   mostChosenTypo: { typo: string; word: string; misses: number } | null;
 };
 
+const sampleStats: Stats = {
+  mostMissedWord: { word: "necessary", misses: 184, topWrong: "neccessary" },
+  mostChosenTypo: { typo: "definately", word: "definitely", misses: 156 },
+  topTypos: [
+    { typo: "definately", word: "definitely", misses: 156 },
+    { typo: "seperate", word: "separate", misses: 141 },
+    { typo: "recieve", word: "receive", misses: 128 }
+  ],
+  topWords: [
+    { word: "necessary", misses: 184, topWrong: "neccessary" },
+    { word: "definitely", misses: 156, topWrong: "definately" },
+    { word: "separate", misses: 141, topWrong: "seperate" },
+    { word: "receive", misses: 128, topWrong: "recieve" },
+    { word: "accommodate", misses: 117, topWrong: "accomodate" },
+    { word: "occurrence", misses: 103, topWrong: "occurence" },
+    { word: "maintenance", misses: 97, topWrong: "maintainance" },
+    { word: "embarrass", misses: 91, topWrong: "embarass" },
+    { word: "privilege", misses: 84, topWrong: "privelege" },
+    { word: "conscience", misses: 76, topWrong: "concience" }
+  ]
+};
+
 export function MissStats({ challengeId }: { challengeId: string }) {
   const [stats, setStats] = useState<Stats | null>(null);
 
@@ -25,37 +47,30 @@ export function MissStats({ challengeId }: { challengeId: string }) {
     };
   }, [challengeId]);
 
-  if (!stats || !stats.topWords.length) {
-    return (
-      <div className="panel">
-        <h3>Today&apos;s hardest words</h3>
-        <p>No wrong-answer data yet. Once players finish, this section will show the words missed most often today.</p>
-      </div>
-    );
-  }
+  const displayStats = stats && stats.topWords.length ? stats : sampleStats;
 
   return (
     <div className="stats-grid">
       <article className="panel">
-        <span className="eyebrow">Most missed word</span>
-        <h3>{stats.mostMissedWord?.word}</h3>
+        <span className="eyebrow">Yesterday&apos;s most missed word</span>
+        <h3>{displayStats.mostMissedWord?.word}</h3>
         <p>
-          Missed {stats.mostMissedWord?.misses} times today. The most tempting wrong answer is{" "}
-          <strong>{stats.mostMissedWord?.topWrong}</strong>.
+          Missed {displayStats.mostMissedWord?.misses} times yesterday. The most tempting wrong answer was{" "}
+          <strong>{displayStats.mostMissedWord?.topWrong}</strong>.
         </p>
       </article>
       <article className="panel">
-        <span className="eyebrow">Most chosen typo</span>
-        <h3>{stats.mostChosenTypo?.typo}</h3>
+        <span className="eyebrow">Yesterday&apos;s most chosen typo</span>
+        <h3>{displayStats.mostChosenTypo?.typo}</h3>
         <p>
-          Players picked this for <strong>{stats.mostChosenTypo?.word}</strong>{" "}
-          {stats.mostChosenTypo?.misses} times.
+          Players picked this for <strong>{displayStats.mostChosenTypo?.word}</strong>{" "}
+          {displayStats.mostChosenTypo?.misses} times.
         </p>
       </article>
       <article className="panel wide-panel">
-        <span className="eyebrow">Top 10 missed words today</span>
+        <span className="eyebrow">Top 10 missed words yesterday</span>
         <ol className="miss-list">
-          {stats.topWords.slice(0, 10).map((item) => (
+          {displayStats.topWords.slice(0, 10).map((item) => (
             <li key={item.word}>
               <span>{item.word}</span>
               <small>

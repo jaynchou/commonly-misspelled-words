@@ -213,72 +213,136 @@ export function DailyQuiz({
 
   async function copyResultImage() {
     const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1580;
+    canvas.width = 1000;
+    canvas.height = 980;
     const context = canvas.getContext("2d");
     if (!context) return;
 
+    const round = (x: number, y: number, width: number, height: number, radius: number) => {
+      context.beginPath();
+      context.moveTo(x + radius, y);
+      context.lineTo(x + width - radius, y);
+      context.quadraticCurveTo(x + width, y, x + width, y + radius);
+      context.lineTo(x + width, y + height - radius);
+      context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      context.lineTo(x + radius, y + height);
+      context.quadraticCurveTo(x, y + height, x, y + height - radius);
+      context.lineTo(x, y + radius);
+      context.quadraticCurveTo(x, y, x + radius, y);
+      context.closePath();
+    };
+
+    const fillRound = (x: number, y: number, width: number, height: number, radius: number, fill: string | CanvasGradient) => {
+      round(x, y, width, height, radius);
+      context.fillStyle = fill;
+      context.fill();
+    };
+
+    const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
+      const words = text.split(" ");
+      let line = "";
+      let nextY = y;
+      words.forEach((word) => {
+        const testLine = line ? `${line} ${word}` : word;
+        if (context.measureText(testLine).width > maxWidth && line) {
+          context.fillText(line, x, nextY);
+          line = word;
+          nextY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      });
+      if (line) context.fillText(line, x, nextY);
+      return nextY + lineHeight;
+    };
+
     context.fillStyle = "#f6efe3";
     context.fillRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "#17130f";
-    context.font = "700 68px Georgia, serif";
-    context.fillText("TypoFind", 86, 120);
-    context.font = "700 52px Georgia, serif";
-    context.fillText(title, 86, 230);
-    context.font = "32px Georgia, serif";
-    context.fillStyle = "#756d63";
-    context.fillText("Daily commonly misspelled words quiz", 86, 290);
 
-    context.fillStyle = "#17130f";
-    context.font = "700 150px Georgia, serif";
-    context.fillText(`${score.toFixed(1)}`, 86, 500);
-    context.font = "700 44px Georgia, serif";
-    context.fillText("/10", 430, 500);
+    const cardX = 0;
+    const cardY = 28;
+    const cardW = 1000;
+    const cardH = 920;
+    const gradient = context.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+    gradient.addColorStop(0, "#281827");
+    gradient.addColorStop(0.55, "#111522");
+    gradient.addColorStop(1, "#261628");
+    fillRound(cardX, cardY, cardW, cardH, 18, gradient);
 
-    context.strokeStyle = "#d7c8b4";
-    context.lineWidth = 4;
-    context.strokeRect(86, 580, 908, 320);
-    context.font = "700 38px Georgia, serif";
-    context.fillText(`${correctCount}/20 correct`, 130, 670);
-    context.fillText(`Time ${formatTime(elapsed)}`, 130, 750);
-    context.fillText(`Challenge ${challengeId}`, 130, 830);
+    context.fillStyle = "rgba(255, 250, 241, 0.74)";
+    context.font = "700 22px Georgia, serif";
+    context.fillText("TYPOFIND", 48, 104);
 
-    context.fillStyle = "#17130f";
-    context.font = "700 34px Georgia, serif";
-    context.fillText("Words", 86, 970);
-    context.font = "26px Georgia, serif";
-    let x = 86;
-    let y = 1025;
-    answers.forEach((answer) => {
-      const label = answer.correct;
-      const width = Math.min(context.measureText(label).width + 34, 430);
-      if (x + width > 994) {
-        x = 86;
-        y += 48;
-      }
-      context.fillStyle = answer.isCorrect ? "#e8f2de" : "#f7dfd9";
-      context.fillRect(x, y - 30, width, 38);
-      context.fillStyle = answer.isCorrect ? "#18350d" : "#4a120a";
-      context.fillText(label, x + 14, y - 4);
-      if (!answer.isCorrect) {
-        context.strokeStyle = "#4a120a";
-        context.lineWidth = 3;
-        context.beginPath();
-        context.moveTo(x + 14, y - 14);
-        context.lineTo(x + width - 14, y - 14);
-        context.stroke();
-      }
-      x += width + 12;
+    context.fillStyle = "#fffaf1";
+    context.font = "700 50px Georgia, serif";
+    context.fillText(title, 48, 168);
+
+    context.fillStyle = "rgba(255, 250, 241, 0.72)";
+    context.font = "28px Georgia, serif";
+    wrapText(shareText, 48, 244, 760, 44);
+
+    const statsX = 48;
+    const statsY = 370;
+    const statsW = 904;
+    const statsH = 170;
+    fillRound(statsX, statsY, statsW, statsH, 16, "#fffaf1");
+    context.strokeStyle = "#756d63";
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(statsX + statsW / 3, statsY);
+    context.lineTo(statsX + statsW / 3, statsY + statsH);
+    context.moveTo(statsX + (statsW / 3) * 2, statsY);
+    context.lineTo(statsX + (statsW / 3) * 2, statsY + statsH);
+    context.stroke();
+
+    const stats = [
+      ["TOTAL SCORE", score.toFixed(1), "/10"],
+      ["CORRECT", String(correctCount), "/20"],
+      ["TIME", formatTime(elapsed), challengeId]
+    ];
+    stats.forEach((item, itemIndex) => {
+      const left = statsX + itemIndex * (statsW / 3) + 26;
+      context.fillStyle = "#756d63";
+      context.font = "700 22px Georgia, serif";
+      context.fillText(item[0], left, statsY + 44);
+      context.fillStyle = "#17130f";
+      context.font = "700 54px Georgia, serif";
+      context.fillText(item[1], left, statsY + 108);
+      context.fillStyle = "#756d63";
+      context.font = "700 20px Georgia, serif";
+      context.fillText(item[2], left, statsY + 140);
     });
 
-    context.fillStyle = "#9f2f23";
-    context.fillRect(86, 1320, 908, 130);
+    context.font = "700 25px Georgia, serif";
+    let x = 48;
+    let y = 610;
+    answers.forEach((answer) => {
+      const label = answer.correct;
+      const width = context.measureText(label).width + 36;
+      if (x + width > 952) {
+        x = 48;
+        y += 54;
+      }
+      fillRound(x, y - 34, width, 42, 21, answer.isCorrect ? "#303943" : "#433844");
+      context.fillStyle = answer.isCorrect ? "#d8f2c8" : "#ffd5cc";
+      context.fillText(label, x + 18, y - 6);
+      if (!answer.isCorrect) {
+        context.strokeStyle = "#ffd5cc";
+        context.lineWidth = 4;
+        context.beginPath();
+        context.moveTo(x + 18, y - 18);
+        context.lineTo(x + width - 18, y - 18);
+        context.stroke();
+      }
+      x += width + 14;
+    });
+
+    fillRound(48, 812, 904, 100, 14, "#a93024");
     context.fillStyle = "#fffaf1";
-    context.font = "700 48px Georgia, serif";
-    context.fillText("Play free at typofind.com", 130, 1402);
-    context.fillStyle = "#756d63";
-    context.font = "30px Georgia, serif";
-    context.fillText(shareText, 86, 1510);
+    context.font = "700 42px Georgia, serif";
+    context.textAlign = "center";
+    context.fillText("Play free at typofind.com", 500, 875);
+    context.textAlign = "left";
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) return;
@@ -322,9 +386,20 @@ export function DailyQuiz({
           ) : null}
         </div>
 
-        <div className="progress" aria-label="Challenge progress">
-          <span style={{ width: `${(answers.length / words.length) * 100}%` }} />
-        </div>
+        {started ? (
+          <div
+            className="progress"
+            role="progressbar"
+            aria-label="Challenge progress"
+            aria-valuemin={0}
+            aria-valuemax={words.length}
+            aria-valuenow={answers.length}
+          >
+            <span style={{ width: `${(answers.length / words.length) * 100}%` }} />
+          </div>
+        ) : (
+          <div className="rule-divider" aria-hidden="true" />
+        )}
 
         {!started ? (
           <div className="start-panel">

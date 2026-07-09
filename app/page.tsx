@@ -53,8 +53,8 @@ export default function HomePage() {
       <section className="container section">
         <div className="section-header">
           <div>
-            <span className="eyebrow">Today&apos;s mistakes</span>
-            <h2>What players are missing now.</h2>
+            <span className="eyebrow">Yesterday&apos;s mistakes</span>
+            <h2>What players missed yesterday.</h2>
           </div>
         </div>
         <MissStats challengeId={today} />

@@ -1,14 +1,14 @@
 :root {
   color-scheme: light;
-  --paper: #f4eddf;
-  --paper-fiber: #e6dcc8;
+  --paper: #f7f3ea;
+  --paper-fiber: #eee7d8;
   --ink: #1f1b16;
   --muted: #746b60;
-  --line: #d2c4ad;
+  --line: #d8cebd;
   --accent: #8d2f22;
   --accent-ink: #fff9f4;
-  --panel: #fbf4e8;
-  --shadow: 0 14px 42px rgb(57 38 20 / 0.08);
+  --panel: #fffaf1;
+  --shadow: 0 16px 50px rgb(51 35 18 / 0.09);
   --ui-font: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
 }
 
@@ -25,60 +25,6 @@
   --shadow: 0 18px 60px rgb(0 0 0 / 0.28);
 }
 
-[data-theme="dark"] body {
-  background:
-    linear-gradient(90deg, rgb(255 231 190 / 0.018) 1px, transparent 1px) 0 0 / 58px 58px,
-    linear-gradient(0deg, rgb(255 231 190 / 0.018) 1px, transparent 1px) 0 0 / 58px 58px,
-    linear-gradient(112deg, transparent 0 46%, rgb(255 231 190 / 0.025) 46.4%, transparent 47.2%),
-    radial-gradient(ellipse at center, transparent 0 54%, rgb(0 0 0 / 0.28) 100%),
-    var(--paper);
-}
-
-[data-theme="dark"] body::before {
-  background:
-    repeating-linear-gradient(0deg, rgb(255 231 190 / 0.018) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(92deg, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 15px);
-  opacity: 0.34;
-}
-
-[data-theme="dark"] .site-header {
-  background:
-    linear-gradient(180deg, rgb(21 19 15 / 0.94), rgb(18 16 13 / 0.92)),
-    var(--paper);
-}
-
-[data-theme="dark"] .quiz-shell,
-[data-theme="dark"] .leaderboard-card,
-[data-theme="dark"] .panel,
-[data-theme="dark"] .mobile-menu nav {
-  background:
-    linear-gradient(145deg, rgb(31 27 21 / 0.96), rgb(24 21 17 / 0.98)),
-    var(--panel);
-}
-
-[data-theme="dark"] .form-row input {
-  background: color-mix(in srgb, var(--paper) 88%, black);
-}
-
-[data-theme="dark"] .primary-button {
-  background: var(--accent);
-  color: #20130f;
-}
-
-[data-theme="dark"] .progress {
-  background: color-mix(in srgb, var(--line) 72%, black);
-}
-
-[data-theme="dark"] .choice {
-  background: rgb(0 0 0 / 0.08);
-}
-
-[data-theme="dark"] .site-footer {
-  background:
-    linear-gradient(180deg, transparent, rgb(0 0 0 / 0.24)),
-    color-mix(in srgb, var(--panel) 52%, transparent);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -89,31 +35,16 @@ html {
 }
 
 body {
-  position: relative;
   margin: 0;
-  min-height: 100vh;
   overflow-x: hidden;
   color: var(--ink);
   background:
-    linear-gradient(0deg, rgb(255 255 255 / 0.16), transparent 28%, rgb(74 50 22 / 0.026) 78%, transparent),
-    linear-gradient(112deg, transparent 0 46%, rgb(91 62 30 / 0.02) 46.4%, transparent 47.2%),
-    radial-gradient(ellipse at center, transparent 0 58%, rgb(92 61 28 / 0.12) 100%),
+    radial-gradient(circle at 20% 10%, rgb(0 0 0 / 0.035) 0 1px, transparent 1px) 0 0 / 18px 18px,
+    radial-gradient(circle at 80% 30%, rgb(255 255 255 / 0.35) 0 1px, transparent 1px) 0 0 / 23px 23px,
+    linear-gradient(90deg, rgb(0 0 0 / 0.028) 1px, transparent 1px) 0 0 / 42px 42px,
+    linear-gradient(0deg, color-mix(in srgb, var(--paper-fiber) 42%, transparent), transparent 38%),
     var(--paper);
   font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgb(255 255 255 / 0.16) 48%, transparent 52%),
-    radial-gradient(circle at 12% 34%, rgb(91 62 30 / 0.035), transparent 16%),
-    radial-gradient(circle at 88% 62%, rgb(91 62 30 / 0.03), transparent 18%);
-  mix-blend-mode: multiply;
-  opacity: 0.58;
 }
 
 a {
@@ -141,10 +72,7 @@ input {
   align-items: center;
   padding: 18px clamp(18px, 4vw, 56px);
   border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, rgb(255 250 241 / 0.78), rgb(244 237 223 / 0.82)),
-    color-mix(in srgb, var(--paper) 90%, transparent);
-  backdrop-filter: blur(7px);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
 }
 
 .brand {
@@ -426,9 +354,7 @@ p {
 .panel {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background:
-    linear-gradient(145deg, rgb(255 250 241 / 0.72), rgb(246 238 224 / 0.78)),
-    var(--panel);
+  background: var(--panel);
   box-shadow: var(--shadow);
 }
 
@@ -827,13 +753,6 @@ p {
   background: color-mix(in srgb, var(--line) 70%, transparent);
 }
 
-.rule-divider {
-  height: 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid color-mix(in srgb, var(--paper) 72%, white);
-  background: transparent;
-}
-
 .progress span {
   display: block;
   height: 100%;
@@ -925,9 +844,7 @@ p {
   flex-direction: column;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background:
-    linear-gradient(145deg, rgb(255 250 241 / 0.72), rgb(246 238 224 / 0.78)),
-    var(--panel);
+  background: var(--panel);
   box-shadow: var(--shadow);
   padding: 12px;
 }
@@ -1260,9 +1177,7 @@ p {
   margin-top: 42px;
   padding: 38px 18px 28px;
   border-top: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, transparent, rgb(232 220 200 / 0.34)),
-    color-mix(in srgb, var(--panel) 48%, transparent);
+  background: color-mix(in srgb, var(--panel) 62%, transparent);
   text-align: center;
 }
 
