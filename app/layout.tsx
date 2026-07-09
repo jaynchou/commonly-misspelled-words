@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <small>Daily typo quiz</small>
             </span>
           </Link>
-          <nav aria-label="Primary navigation">
+          <nav className="desktop-nav" aria-label="Primary navigation">
             {nav.map(([label, href]) => (
               <Link key={href} href={href}>
                 {label}
@@ -64,23 +64,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ))}
           </nav>
           <ThemeToggle />
+          <details className="mobile-menu">
+            <summary aria-label="Open menu">Menu</summary>
+            <nav aria-label="Mobile navigation">
+              {nav.map(([label, href]) => (
+                <Link key={href} href={href}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </details>
         </header>
         <main>{children}</main>
         <footer className="site-footer">
-          <div className="footer-brand">
-            <span className="brand-mark">
-              <span>T</span>
-              <i>f</i>
-            </span>
-            <div>
-              <strong>TypoFind</strong>
-              <p>Free daily misspelled words quiz for sharper proofreading.</p>
-            </div>
-          </div>
-          <div className="footer-links">
+          <nav className="footer-nav" aria-label="Footer navigation">
+            <Link href="/how-to-play">How to play TypoFind</Link>
+            <Link href="/commonly-misspelled-words">Commonly misspelled words</Link>
+            <Link href="/leaderboard">Leaderboard</Link>
+            <Link href="/faq">FAQ</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
-            <Link href="/how-to-play">How to play</Link>
+          </nav>
+          <div className="footer-label">Daily spelling desk</div>
+          <div className="footer-bottom">
+            <Link href="/" className="footer-mini-mark" aria-label="TypoFind home">
+              Tf
+            </Link>
+            <p>
+              TypoFind — a free daily misspelled words quiz for sharper proofreading.
+            </p>
           </div>
         </footer>
       </body>

@@ -145,7 +145,7 @@ export function DailyQuiz({
 
         {!started ? (
           <div className="start-panel">
-            <p className="quiz-word">Ready for today&apos;s spelling challenge?</p>
+            <p className="quiz-word start-prompt">Ready for today&apos;s spelling challenge?</p>
             <button className="primary-button start-button" type="button" onClick={start}>
               <Play size={18} /> Start today&apos;s quiz
             </button>

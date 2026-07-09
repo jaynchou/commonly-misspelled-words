@@ -22,7 +22,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="wide-container challenge-band">
+      <section className="challenge-band">
         <ChallengeSection words={words} challengeId={today} />
       </section>
 
