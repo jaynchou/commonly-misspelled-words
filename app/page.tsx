@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChallengeSection } from "@/components/challenge-section";
+import { FAQAccordion } from "@/components/faq-accordion";
 import { MissStats } from "@/components/miss-stats";
 import { challengeId, dailyWords } from "@/lib/words";
 
@@ -69,20 +70,7 @@ export default function HomePage() {
             Study the top words
           </Link>
         </div>
-        <div className="grid-3">
-          <article className="panel">
-            <h3>Is TypoFind free?</h3>
-            <p>Yes. The daily misspelled words quiz is free to play.</p>
-          </article>
-          <article className="panel">
-            <h3>Why only one daily quiz?</h3>
-            <p>A shared daily set keeps the leaderboard fair and makes comparison meaningful.</p>
-          </article>
-          <article className="panel">
-            <h3>How is the score calculated?</h3>
-            <p>Each of 20 questions is worth up to 0.5 points. The total score is out of 10.</p>
-          </article>
-        </div>
+        <FAQAccordion limit={6} />
       </section>
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MobileMenu } from "@/components/mobile-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
@@ -64,16 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ))}
           </nav>
           <ThemeToggle />
-          <details className="mobile-menu">
-            <summary aria-label="Open menu">Menu</summary>
-            <nav aria-label="Mobile navigation">
-              {nav.map(([label, href]) => (
-                <Link key={href} href={href}>
-                  {label}
-                </Link>
-              ))}
-            </nav>
-          </details>
+          <MobileMenu items={nav.map(([label, href]) => ({ label, href }))} />
         </header>
         <main>{children}</main>
         <footer className="site-footer">
