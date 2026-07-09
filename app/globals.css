@@ -169,7 +169,7 @@ nav a:hover,
 }
 
 .container {
-  width: min(1180px, calc(100% - 28px));
+  width: min(1280px, calc(100% - 28px));
   margin: 0 auto;
 }
 
@@ -200,7 +200,7 @@ h1 {
 .hero-line {
   max-width: none;
   overflow: hidden;
-  font-size: clamp(1rem, 2.45vw, 2.35rem);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
   line-height: 1.12;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -235,13 +235,14 @@ p {
 }
 
 .challenge-band {
+  width: min(1320px, calc(100% - 28px));
   padding: 10px 0 28px;
 }
 
 .play-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 330px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+  gap: 22px;
   align-items: start;
   width: 100%;
   min-width: 0;
@@ -437,6 +438,7 @@ p {
 }
 
 .leaderboard-card {
+  align-self: start;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -653,7 +655,8 @@ p {
   }
 
   .hero-line {
-    font-size: clamp(0.78rem, 3.2vw, 1rem);
+    font-size: clamp(1rem, 5vw, 1.55rem);
+    white-space: normal;
   }
 
   .start-panel {
@@ -689,7 +692,7 @@ p {
   }
 
   .hero-line {
-    font-size: clamp(0.72rem, 3vw, 0.92rem);
+    font-size: clamp(0.95rem, 5.5vw, 1.35rem);
   }
 
   .quiz-shell,

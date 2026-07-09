@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DailyQuiz } from "@/components/daily-quiz";
+import { ChallengeSection } from "@/components/challenge-section";
 import { MissStats } from "@/components/miss-stats";
 import { challengeId, dailyWords } from "@/lib/words";
 
@@ -23,7 +23,7 @@ export default function HomePage() {
       </section>
 
       <section className="container challenge-band">
-        <DailyQuiz words={words} challengeId={today} />
+        <ChallengeSection words={words} challengeId={today} />
       </section>
 
       <section className="container section">
@@ -35,12 +35,12 @@ export default function HomePage() {
         </div>
         <div className="grid-3">
           <article className="panel">
-            <h3>1. Start the daily desk</h3>
+            <h3>1. Start the daily challenge</h3>
             <p>Tap Start. You get 20 words, and every word has a 10-second timer.</p>
           </article>
           <article className="panel">
             <h3>2. Read the sentence</h3>
-            <p>Example: Use &quot;accommodate&quot; when you mean to provide room or fit a need.</p>
+            <p>Example: Choose the word meaning to provide room or fit a need.</p>
           </article>
           <article className="panel">
             <h3>3. Score up to 10</h3>

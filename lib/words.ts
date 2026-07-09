@@ -156,7 +156,7 @@ export const wordBank: WordEntry[] = coreWords.map((item, index) => ({
   word: item[0],
   misspellings: plausibleMisspellings(item[0], item[1].split(",")),
   definition: item[2],
-  sentence: `Use "${item[0]}" when you mean ${item[2]}.`,
+  sentence: `Choose the word that means ${item[2]}.`,
   note: item[3],
   why: `${item[0]} is often misspelled because ${item[3].toLowerCase()} The mistake usually comes from silent letters, doubled consonants, or a familiar spelling rule being applied in the wrong place.`,
   difficulty: index < 60 ? "desk" : index < 92 ? "copy chief" : "front page"

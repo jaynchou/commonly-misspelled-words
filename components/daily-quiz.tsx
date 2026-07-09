@@ -2,8 +2,6 @@
 
 import { CheckCircle2, Clock3, Play } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Leaderboard } from "@/components/leaderboard";
-import { ResetCountdown } from "@/components/reset-countdown";
 import { totalScore } from "@/lib/scoring";
 import type { WordEntry } from "@/lib/words";
 
@@ -24,7 +22,15 @@ function formatTime(ms: number) {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
-export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challengeId: string }) {
+export function DailyQuiz({
+  words,
+  challengeId,
+  onScoreSaved
+}: {
+  words: WordEntry[];
+  challengeId: string;
+  onScoreSaved?: () => void;
+}) {
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
@@ -37,7 +43,6 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
   const [saved, setSaved] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const current = words[index];
   const choices = useMemo(() => shuffle([current.word, ...current.misspellings.slice(0, 3)]), [current]);
@@ -110,7 +115,7 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
       }
 
       setSaved(true);
-      setRefreshKey((value) => value + 1);
+      onScoreSaved?.();
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Could not record your score.");
     } finally {
@@ -119,8 +124,7 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
   }
 
   return (
-    <div className="play-layout">
-      <div className="quiz-shell">
+    <div className="quiz-shell">
         <div className="quiz-top">
           <div>
             <span className="eyebrow">Daily challenge {challengeId}</span>
@@ -199,18 +203,6 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
           {submitError ? <p className="form-error">{submitError}</p> : null}
         </>
       )}
-      </div>
-
-      <aside className="leaderboard-card">
-        <div className="section-header compact">
-          <div>
-            <span className="live-label">Live</span>
-            <h3>Leaderboard</h3>
-            <ResetCountdown />
-          </div>
-        </div>
-        <Leaderboard challengeId={challengeId} refreshKey={refreshKey} />
-      </aside>
     </div>
   );
 }
