@@ -1148,7 +1148,9 @@ p {
 
 .article h1 {
   margin-bottom: 22px;
-  font-size: clamp(2.8rem, 6vw, 6rem);
+  max-width: 980px;
+  font-size: clamp(2.15rem, 4.1vw, 4rem);
+  line-height: 1.02;
 }
 
 .article h2 {
@@ -1172,8 +1174,8 @@ p {
 .leaderboard-hero h1 {
   max-width: none;
   margin: 0;
-  font-size: clamp(3rem, 6vw, 6.5rem);
-  line-height: 0.95;
+  font-size: clamp(2.25rem, 4.2vw, 4.2rem);
+  line-height: 1.02;
 }
 
 .leaderboard-hero p {
@@ -1690,8 +1692,8 @@ p {
 
   .article h1,
   .leaderboard-hero h1 {
-    font-size: clamp(2.15rem, 12vw, 3.4rem);
-    line-height: 0.98;
+    font-size: clamp(1.85rem, 8.6vw, 2.65rem);
+    line-height: 1.04;
   }
 
   .article h2 {
