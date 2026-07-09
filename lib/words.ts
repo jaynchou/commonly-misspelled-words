@@ -179,8 +179,33 @@ export const expandedWordBank: WordEntry[] = [
   .slice(0, 500)
   .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
-export function dailyWords(date = new Date(), count = 20) {
-  const dayKey = Number(date.toISOString().slice(0, 10).replaceAll("-", ""));
+function easternParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false
+  }).formatToParts(date);
+
+  return {
+    year: Number(parts.find((part) => part.type === "year")?.value || 0),
+    month: Number(parts.find((part) => part.type === "month")?.value || 1),
+    day: Number(parts.find((part) => part.type === "day")?.value || 1),
+    hour: Number(parts.find((part) => part.type === "hour")?.value || 0)
+  };
+}
+
+export function challengeId(date = new Date()) {
+  const parts = easternParts(date);
+  let gameDay = Date.UTC(parts.year, parts.month - 1, parts.day);
+  if (parts.hour < 1) gameDay -= 24 * 60 * 60 * 1000;
+  return new Date(gameDay).toISOString().slice(0, 10);
+}
+
+export function wordsForChallengeId(id: string, count = 20) {
+  const dayKey = Number(id.replaceAll("-", ""));
   return [...wordBank]
     .map((entry, index) => {
       const score = Math.sin((index + 1) * 999 + dayKey) * 10000;
@@ -191,6 +216,6 @@ export function dailyWords(date = new Date(), count = 20) {
     .map(({ entry }) => entry);
 }
 
-export function challengeId(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+export function dailyWords(date = new Date(), count = 20) {
+  return wordsForChallengeId(challengeId(date), count);
 }

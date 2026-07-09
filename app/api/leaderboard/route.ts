@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { addLeaderboardEntry, listLeaderboard } from "@/lib/leaderboard";
+import { totalScore } from "@/lib/scoring";
+import { challengeId as currentChallengeId, wordsForChallengeId } from "@/lib/words";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -27,18 +29,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid challenge." }, { status: 400 });
   }
 
+  if (challengeId !== currentChallengeId()) {
+    return NextResponse.json({ error: "This daily challenge is no longer active." }, { status: 409 });
+  }
+
+  const challengeWords = wordsForChallengeId(challengeId);
+  if (answers.length !== challengeWords.length) {
+    return NextResponse.json({ error: "Incomplete answer sheet." }, { status: 400 });
+  }
+
+  const cleanedAnswers = answers.slice(0, 20).map((answer: Record<string, unknown>, index: number) => {
+    const expected = challengeWords[index];
+    const selected = String(answer.selected || "").slice(0, 60);
+    return {
+      word: expected.word,
+      selected,
+      correct: expected.word,
+      isCorrect: selected === expected.word,
+      remainingMs: Math.max(0, Math.min(10000, Number(answer.remainingMs) || 0))
+    };
+  });
+  const verifiedScore = totalScore(cleanedAnswers);
+
   const entry = await addLeaderboardEntry({
     name: String(body.name || "Anonymous"),
-    score,
+    score: verifiedScore,
     timeMs,
     challengeId,
-    answers: answers.slice(0, 20).map((answer: Record<string, unknown>) => ({
-      word: String(answer.word || "").slice(0, 60),
-      selected: String(answer.selected || "").slice(0, 60),
-      correct: String(answer.correct || "").slice(0, 60),
-      isCorrect: Boolean(answer.isCorrect),
-      remainingMs: Math.max(0, Math.min(10000, Number(answer.remainingMs) || 0))
-    }))
+    answers: cleanedAnswers
   });
 
   return NextResponse.json({ entry });

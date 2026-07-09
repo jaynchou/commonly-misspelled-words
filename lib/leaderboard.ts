@@ -47,18 +47,18 @@ async function writeLocal(entries: LeaderboardEntry[]) {
   await fs.writeFile(localPath, JSON.stringify(entries, null, 2), "utf8");
 }
 
-export async function listLeaderboard(challengeId?: string) {
+export async function listLeaderboard(challengeId?: string, limit = 100) {
   const supabase = supabaseClient();
   if (supabase) {
     let query = supabase.from("leaderboard_entries").select("*").order("score", { ascending: false }).order("time_ms");
     if (challengeId) query = query.eq("challenge_id", challengeId);
-    const { data, error } = await query.limit(100);
+    const { data, error } = await query.limit(limit);
     if (error) throw new Error(error.message);
     return (data || []).map((row) => ({
       id: row.id,
       name: row.name,
-      score: row.score,
-      timeMs: row.time_ms,
+      score: Number(row.score),
+      timeMs: Number(row.time_ms),
       challengeId: row.challenge_id,
       answers: Array.isArray(row.answers) ? row.answers : [],
       createdAt: row.created_at
@@ -66,7 +66,7 @@ export async function listLeaderboard(challengeId?: string) {
   }
 
   const entries = await readLocal();
-  return order(challengeId ? entries.filter((entry) => entry.challengeId === challengeId) : entries).slice(0, 100);
+  return order(challengeId ? entries.filter((entry) => entry.challengeId === challengeId) : entries).slice(0, limit);
 }
 
 export async function addLeaderboardEntry(entry: Omit<LeaderboardEntry, "createdAt">) {
@@ -98,7 +98,7 @@ export async function addLeaderboardEntry(entry: Omit<LeaderboardEntry, "created
 }
 
 export async function listDailyMissStats(challengeId: string) {
-  const entries = await listLeaderboard(challengeId);
+  const entries = await listLeaderboard(challengeId, 1000);
   const wordCounts = new Map<string, { word: string; misses: number; selected: Map<string, number> }>();
   const typoCounts = new Map<string, { typo: string; word: string; misses: number }>();
 
@@ -114,6 +114,7 @@ export async function listDailyMissStats(challengeId: string) {
       wordStat.selected.set(answer.selected, (wordStat.selected.get(answer.selected) || 0) + 1);
       wordCounts.set(answer.correct, wordStat);
 
+      if (answer.selected === "Time expired") continue;
       const typoKey = `${answer.correct}:${answer.selected}`;
       const typoStat = typoCounts.get(typoKey) || { typo: answer.selected, word: answer.correct, misses: 0 };
       typoStat.misses += 1;
@@ -125,7 +126,9 @@ export async function listDailyMissStats(challengeId: string) {
     .map((item) => ({
       word: item.word,
       misses: item.misses,
-      topWrong: [...item.selected.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || ""
+      topWrong:
+        [...item.selected.entries()].filter(([selected]) => selected !== "Time expired").sort((a, b) => b[1] - a[1])[0]?.[0] ||
+        "no answer"
     }))
     .sort((a, b) => b.misses - a.misses)
     .slice(0, 10);

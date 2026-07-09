@@ -4,6 +4,7 @@ import { CheckCircle2, Clock3, Play } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Leaderboard } from "@/components/leaderboard";
 import { ResetCountdown } from "@/components/reset-countdown";
+import { totalScore } from "@/lib/scoring";
 import type { WordEntry } from "@/lib/words";
 
 type AnswerRecord = {
@@ -23,11 +24,6 @@ function formatTime(ms: number) {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
-function pointsFor(isCorrect: boolean, remainingMs: number) {
-  if (!isCorrect) return 0;
-  return 0.35 + (Math.max(0, Math.min(10000, remainingMs)) / 10000) * 0.15;
-}
-
 export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challengeId: string }) {
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
@@ -39,11 +35,13 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
   const [finishedAt, setFinishedAt] = useState<number | null>(null);
   const [name, setName] = useState("");
   const [saved, setSaved] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const current = words[index];
   const choices = useMemo(() => shuffle([current.word, ...current.misspellings.slice(0, 3)]), [current]);
-  const score = answers.reduce((sum, answer) => sum + pointsFor(answer.isCorrect, answer.remainingMs), 0);
+  const score = totalScore(answers);
   const isDone = answers.length === words.length;
   const elapsed = startedAt ? (finishedAt || Date.now()) - startedAt : 0;
 
@@ -97,15 +95,26 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
   }
 
   async function submitScore() {
-    const response = await fetch("/api/leaderboard", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, score: Number(score.toFixed(2)), timeMs: elapsed, challengeId, answers })
-    });
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/leaderboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, score, timeMs: elapsed, challengeId, answers })
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Could not record your score.");
+      }
+
       setSaved(true);
       setRefreshKey((value) => value + 1);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not record your score.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -117,9 +126,11 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
             <span className="eyebrow">Daily challenge {challengeId}</span>
             <h2 className="quiz-title">{isDone ? "Score filed?" : "Find the correct spelling."}</h2>
           </div>
-          {started ? <div className="note">
-            <Clock3 size={16} aria-hidden /> {started ? formatTime(elapsed) : "20 questions"}
-          </div> : null}
+          {started ? (
+            <div className="note">
+              <Clock3 size={16} aria-hidden /> {formatTime(elapsed)}
+            </div>
+          ) : null}
         </div>
 
         <div className="progress" aria-label="Challenge progress">
@@ -137,7 +148,7 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
           <>
             <div className="timer-row">
               <span>Question {index + 1} of 20</span>
-              <strong>{Math.ceil(remainingMs / 1000)}s</strong>
+              <strong aria-live="polite">{Math.ceil(remainingMs / 1000)}s</strong>
             </div>
             <p className="quiz-word">Which spelling is correct?</p>
             <p>{current.sentence}</p>
@@ -173,18 +184,21 @@ export function DailyQuiz({ words, challengeId }: { words: WordEntry[]; challeng
                 aria-label="Leaderboard name"
                 disabled={saved}
               />
-              <button className="primary-button" onClick={submitScore} disabled={saved} type="button">
-                {saved ? (
-                  <>
-                    <CheckCircle2 size={18} /> Recorded
-                  </>
-                ) : (
-                  "Sign score"
-                )}
-              </button>
-            </div>
-          </>
-        )}
+            <button className="primary-button" onClick={submitScore} disabled={saved || submitting} type="button">
+              {saved ? (
+                <>
+                  <CheckCircle2 size={18} /> Recorded
+                </>
+              ) : submitting ? (
+                "Recording..."
+              ) : (
+                "Sign score"
+              )}
+            </button>
+          </div>
+          {submitError ? <p className="form-error">{submitError}</p> : null}
+        </>
+      )}
       </div>
 
       <aside className="leaderboard-card">

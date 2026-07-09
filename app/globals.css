@@ -30,10 +30,12 @@
 
 html {
   background: var(--paper);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  overflow-x: hidden;
   color: var(--ink);
   background:
     radial-gradient(circle at 20% 10%, rgb(0 0 0 / 0.035) 0 1px, transparent 1px) 0 0 / 18px 18px,
@@ -52,6 +54,11 @@ a {
 button,
 input {
   font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 72%, white);
+  outline-offset: 3px;
 }
 
 .site-header {
@@ -201,10 +208,10 @@ h1 {
 
 .quiz-title {
   max-width: 100%;
-  overflow-wrap: anywhere;
-  font-size: clamp(2rem, 5vw, 4.7rem);
-  line-height: 1;
-  white-space: nowrap;
+  overflow-wrap: normal;
+  font-size: clamp(1.7rem, 3.4vw, 3.15rem);
+  line-height: 1.04;
+  white-space: normal;
 }
 
 h2 {
@@ -233,9 +240,11 @@ p {
 
 .play-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 330px);
   gap: 18px;
   align-items: start;
+  width: 100%;
+  min-width: 0;
 }
 
 .stats-row {
@@ -278,6 +287,11 @@ p {
   gap: 16px;
   border-bottom: 1px solid var(--line);
   padding-bottom: 16px;
+}
+
+.quiz-top > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .quiz-word {
@@ -335,6 +349,13 @@ p {
   background: var(--paper);
   color: var(--ink);
   padding: 0 16px;
+}
+
+.form-error {
+  margin: 10px 0 0;
+  color: var(--accent);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.92rem;
 }
 
 .progress {
