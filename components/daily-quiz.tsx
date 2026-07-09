@@ -13,6 +13,8 @@ type AnswerRecord = {
   remainingMs: number;
 };
 
+const FEEDBACK_DELAY_MS = 1200;
+
 function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
 }
@@ -96,7 +98,7 @@ export function DailyQuiz({
         setRemainingMs(10000);
         setQuestionStartedAt(Date.now());
       }
-    }, 450);
+    }, FEEDBACK_DELAY_MS);
   }
 
   async function submitScore() {
