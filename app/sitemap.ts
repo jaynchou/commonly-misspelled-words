@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const routes = ["", "/commonly-misspelled-words", "/leaderboard", "/how-to-play", "/faq", "/about", "/contact", "/privacy", "/terms"];
+const routes = ["", "/commonly-misspelled-words", "/commonly-misspelled-words-at-work", "/double-letter-spelling-words", "/i-before-e-exceptions", "/leaderboard", "/how-to-play", "/faq", "/about", "/contact", "/privacy", "/terms"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://typofind.com";

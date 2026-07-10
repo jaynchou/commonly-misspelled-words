@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { expandedWordBank, wordBank } from "@/lib/words";
 import { StructuredData } from "@/components/structured-data";
 
@@ -61,6 +62,13 @@ export default function WordsPage() {
             &quot;i before e&quot; is applied too broadly. TypoFind turns those patterns into a short daily proofreading
             exercise.
           </p>
+
+          <h2>Study by pattern</h2>
+          <div className="grid-3 how-grid">
+            <Link className="panel how-card" href="/commonly-misspelled-words-at-work"><h3>Words at work</h3><p>Build a practical checklist for emails, reports, and presentations.</p></Link>
+            <Link className="panel how-card" href="/double-letter-spelling-words"><h3>Double letters</h3><p>Practice words such as accommodate, occurrence, and successful.</p></Link>
+            <Link className="panel how-card" href="/i-before-e-exceptions"><h3>I before e</h3><p>Learn where the familiar spelling rhyme helps—and where it does not.</p></Link>
+          </div>
 
           <h2 id="practice">How to practice the full list</h2>
           <p>
