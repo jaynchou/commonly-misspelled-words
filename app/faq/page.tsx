@@ -1,7 +1,8 @@
 import { FAQAccordion } from "@/components/faq-accordion";
 
 export const metadata = {
-  title: "FAQ"
+  title: "FAQ",
+  alternates: { canonical: "/faq" }
 };
 
 export default function FAQPage() {

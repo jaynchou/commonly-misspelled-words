@@ -1,7 +1,8 @@
 import { Leaderboard } from "@/components/leaderboard";
 
 export const metadata = {
-  title: "Global Leaderboard"
+  title: "Global Leaderboard",
+  alternates: { canonical: "/leaderboard" }
 };
 
 export default function LeaderboardPage() {

@@ -1,7 +1,8 @@
 export const metadata = {
   title: "How to Play",
   description:
-    "Learn how to play TypoFind, the free daily commonly misspelled words quiz game with 20 questions, four choices, timed scoring, and a daily leaderboard."
+    "Learn how to play TypoFind, the free daily commonly misspelled words quiz game with 20 questions, four choices, timed scoring, and a daily leaderboard.",
+  alternates: { canonical: "/how-to-play" }
 };
 
 const steps = [
@@ -34,6 +35,19 @@ const steps = [
 export default function HowToPlayPage() {
   return (
     <section className="container content-page">
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Quiz",
+          name: "TypoFind spelling practice example",
+          about: { "@type": "Thing", name: "English spelling" },
+          hasPart: {
+            "@type": "Question",
+            text: "Choose the word that means to provide room or fit a need.",
+            acceptedAnswer: { "@type": "Answer", text: "accommodate" }
+          }
+        }}
+      />
       <article className="article">
         <span className="eyebrow">How to play</span>
         <h1>How to play TypoFind.</h1>
@@ -128,3 +142,4 @@ export default function HowToPlayPage() {
     </section>
   );
 }
+import { StructuredData } from "@/components/structured-data";

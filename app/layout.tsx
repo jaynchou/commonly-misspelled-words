@@ -27,6 +27,11 @@ export const metadata: Metadata = {
     siteName: "Typofind",
     type: "website"
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "TypoFind: Free Daily Misspelled Words Quiz",
+    description: "Find the correct spelling in today’s free proofreading challenge."
+  },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -72,6 +77,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/commonly-misspelled-words">Commonly misspelled words</Link>
             <Link href="/leaderboard">Leaderboard</Link>
             <Link href="/faq">FAQ</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
           </nav>

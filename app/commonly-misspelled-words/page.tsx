@@ -1,8 +1,10 @@
 import { expandedWordBank, wordBank } from "@/lib/words";
+import { StructuredData } from "@/components/structured-data";
 
 export const metadata = {
   title: "Commonly Misspelled Words",
-  description: "Top commonly misspelled words, most misspelled words, and a ranked Typofind study list."
+  description: "Top commonly misspelled words, most misspelled words, and a ranked Typofind study list.",
+  alternates: { canonical: "/commonly-misspelled-words" }
 };
 
 export default function WordsPage() {
@@ -11,6 +13,14 @@ export default function WordsPage() {
 
   return (
     <section className="container content-page">
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "TypoFind top 100 commonly misspelled words",
+          itemListElement: top100.map((entry) => ({ "@type": "ListItem", position: entry.rank, name: entry.word }))
+        }}
+      />
       <div className="content-grid seo-grid">
         <aside className="toc">
           <span className="eyebrow">On this page</span>

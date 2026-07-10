@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChallengeSection } from "@/components/challenge-section";
 import { FAQAccordion } from "@/components/faq-accordion";
 import { MissStats } from "@/components/miss-stats";
+import { StructuredData } from "@/components/structured-data";
 import { challengeId, dailyWords } from "@/lib/words";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,8 @@ export const revalidate = 0;
 export const metadata = {
   title: "TypoFind: Official Free Daily Misspelled Words Quiz Game",
   description:
-    "Play TypoFind, a free daily typo quiz game where you find misspelled words, fix spelling mistakes, and test your proofreading skills."
+    "Play TypoFind, a free daily typo quiz game where you find misspelled words, fix spelling mistakes, and test your proofreading skills.",
+  alternates: { canonical: "/" }
 };
 
 export default function HomePage() {
@@ -20,6 +22,18 @@ export default function HomePage() {
 
   return (
     <>
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "TypoFind",
+          url: "https://typofind.com",
+          applicationCategory: "EducationalApplication",
+          operatingSystem: "Any",
+          isAccessibleForFree: true,
+          description: "A free daily spelling and proofreading challenge."
+        }}
+      />
       <section className="container hero">
         <div className="hero-copy">
           <h1 className="hero-line">
