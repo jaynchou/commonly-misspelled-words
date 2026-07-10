@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { DailyQuiz } from "@/components/daily-quiz";
 import { Leaderboard } from "@/components/leaderboard";
 import { ResetCountdown } from "@/components/reset-countdown";
@@ -21,6 +22,7 @@ export function ChallengeSection({ words, challengeId }: { words: WordEntry[]; c
           </div>
         </div>
         <Leaderboard challengeId={challengeId} refreshKey={refreshKey} />
+        <Link className="leaderboard-mobile-link" href="/leaderboard">View all rankings</Link>
       </aside>
     </div>
   );

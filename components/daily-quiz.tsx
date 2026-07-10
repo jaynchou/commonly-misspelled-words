@@ -36,6 +36,13 @@ function resultTitle(score: number) {
   return "Saturday Regular";
 }
 
+function resultMessage(score: number) {
+  if (score >= 9) return "Excellent eye. You spotted nearly every spelling trap.";
+  if (score >= 7) return "Strong work. A few tricky spellings got through.";
+  if (score >= 5) return "Nice recovery. Review the missed words, then try again tomorrow.";
+  return "Every round sharpens your proofreading instincts. Come back for tomorrow’s set.";
+}
+
 function SocialIcon({ type }: { type: "whatsapp" | "facebook" | "instagram" | "tiktok" | "x" | "reddit" | "more" }) {
   if (type === "whatsapp") {
     return (
@@ -99,6 +106,7 @@ export function DailyQuiz({
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | "timeout" | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [questionStartedAt, setQuestionStartedAt] = useState<number | null>(null);
   const [sessionToken, setSessionToken] = useState("");
@@ -114,6 +122,7 @@ export function DailyQuiz({
   const [shareStatus, setShareStatus] = useState("");
   const shareButtonRef = useRef<HTMLButtonElement>(null);
   const shareCloseRef = useRef<HTMLButtonElement>(null);
+  const answeringRef = useRef(false);
 
   const current = words[index];
   const choices = useMemo(() => shuffle([current.word, ...current.misspellings.slice(0, 3)]), [current]);
@@ -126,7 +135,7 @@ export function DailyQuiz({
   const shareText = `I scored ${score.toFixed(1)}/10 on TypoFind, the daily commonly misspelled words quiz. ${correctCount}/${words.length} correct in ${formatTime(elapsed)}.`;
 
   useEffect(() => {
-    if (!started || isDone || selected || !questionStartedAt) return;
+    if (!started || isDone || selected || answering || !questionStartedAt) return;
     const timer = window.setInterval(() => {
       const next = Math.max(0, 10000 - (Date.now() - questionStartedAt));
       setRemainingMs(next);
@@ -137,7 +146,7 @@ export function DailyQuiz({
     }, 100);
 
     return () => window.clearInterval(timer);
-  }, [started, isDone, selected, questionStartedAt]);
+  }, [started, isDone, selected, answering, questionStartedAt]);
 
   useEffect(() => {
     if (!shareOpen) return;
@@ -180,9 +189,11 @@ export function DailyQuiz({
   }
 
   async function choose(choice: string) {
-    if (selected || answering || !sessionToken) return;
+    if (selected || answeringRef.current || !sessionToken) return;
+    answeringRef.current = true;
     setAnswering(true);
-    setSelected(choice || "Time expired");
+    setSelected(choice || null);
+    setFeedback(choice ? (choice === current.word ? "correct" : "wrong") : "timeout");
     try {
       const response = await fetch("/api/quiz-session", {
         method: "PATCH",
@@ -202,14 +213,18 @@ export function DailyQuiz({
         } else {
           setIndex((value) => value + 1);
           setSelected(null);
+          setFeedback(null);
           setRemainingMs(10000);
           setQuestionStartedAt(Date.now());
         }
+        answeringRef.current = false;
         setAnswering(false);
       }, FEEDBACK_DELAY_MS);
     } catch (error) {
       setSelected(null);
+      setFeedback(null);
       setSubmitError(error instanceof Error ? error.message : "Could not record that answer.");
+      answeringRef.current = false;
       setAnswering(false);
     }
   }
@@ -460,7 +475,7 @@ export function DailyQuiz({
             <p>{current.sentence}</p>
             <div className="choices">
               {choices.map((choice) => {
-                const state = selected && choice === current.word ? "correct" : selected === choice ? "wrong" : "";
+                const state = feedback === "timeout" ? "" : selected && choice === current.word ? "correct" : selected === choice ? "wrong" : "";
                 return (
                   <button
                     key={choice}
@@ -474,10 +489,17 @@ export function DailyQuiz({
                 );
               })}
             </div>
-            <p className="note">{selected ? current.note : "Four choices. Ten seconds. Total score is out of 10."}</p>
+            <p className={`note answer-feedback ${feedback ? "has-feedback" : ""}`} role="status">
+              {feedback === "correct" ? `Correct — ${current.note}` : feedback === "wrong" ? `Not quite. The correct spelling is ${current.word}. ${current.note}` : feedback === "timeout" ? `Time’s up. The correct spelling was ${current.word}. ${current.note}` : "Four choices. Ten seconds. Total score is out of 10."}
+            </p>
           </>
         ) : (
           <>
+            <div className="result-intro">
+              <span className="eyebrow">Today&apos;s result</span>
+              <h3>{title}</h3>
+              <p>{resultMessage(score)}</p>
+            </div>
             <p className="quiz-word">{score.toFixed(1)}/10</p>
             <p className="finish-note">Finished in {formatTime(elapsed)}. Add a name to rank on today&apos;s leaderboard.</p>
             <div className="finish-actions">

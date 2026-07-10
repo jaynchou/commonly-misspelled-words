@@ -37,7 +37,6 @@ export const metadata: Metadata = {
 const nav = [
   ["Challenge", "/"],
   ["Words", "/commonly-misspelled-words"],
-  ["Rankings", "/leaderboard"],
   ["How to Play", "/how-to-play"],
   ["FAQ", "/faq"]
 ];

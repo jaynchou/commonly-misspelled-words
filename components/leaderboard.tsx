@@ -40,7 +40,14 @@ export function Leaderboard({ challengeId, refreshKey = 0 }: { challengeId?: str
 
   if (status === "loading") return <p className="leaderboard-message">Loading leaderboard…</p>;
   if (status === "error") return <p className="leaderboard-message">The leaderboard is unavailable right now. Please try again soon.</p>;
-  if (!entries.length) return <p className="leaderboard-message">No signed scores yet. Be the first to set today&apos;s pace.</p>;
+  if (!entries.length) {
+    return (
+      <div className="leaderboard-empty">
+        <strong>Set today&apos;s pace</strong>
+        <p>No signed scores yet. Finish all 20 words to claim the first spot.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="leaderboard-scroll">
