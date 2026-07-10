@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, Clipboard, Clock3, ImageDown, Link2, Play, Share2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { totalScore } from "@/lib/scoring";
 import type { WordEntry } from "@/lib/words";
 
@@ -16,7 +16,12 @@ type AnswerRecord = {
 const FEEDBACK_DELAY_MS = 1200;
 
 function shuffle<T>(items: T[]) {
-  return [...items].sort(() => Math.random() - 0.5);
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function formatTime(ms: number) {
@@ -96,6 +101,9 @@ export function DailyQuiz({
   const [selected, setSelected] = useState<string | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [questionStartedAt, setQuestionStartedAt] = useState<number | null>(null);
+  const [sessionToken, setSessionToken] = useState("");
+  const [starting, setStarting] = useState(false);
+  const [answering, setAnswering] = useState(false);
   const [remainingMs, setRemainingMs] = useState(10000);
   const [finishedAt, setFinishedAt] = useState<number | null>(null);
   const [name, setName] = useState("");
@@ -104,6 +112,8 @@ export function DailyQuiz({
   const [submitError, setSubmitError] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
+  const shareButtonRef = useRef<HTMLButtonElement>(null);
+  const shareCloseRef = useRef<HTMLButtonElement>(null);
 
   const current = words[index];
   const choices = useMemo(() => shuffle([current.word, ...current.misspellings.slice(0, 3)]), [current]);
@@ -113,7 +123,7 @@ export function DailyQuiz({
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
   const title = resultTitle(score);
   const shareUrl = "https://typofind.com";
-  const shareText = `I scored ${score.toFixed(1)}/10 on TypoFind, the daily commonly misspelled words quiz. ${correctCount}/20 correct in ${formatTime(elapsed)}.`;
+  const shareText = `I scored ${score.toFixed(1)}/10 on TypoFind, the daily commonly misspelled words quiz. ${correctCount}/${words.length} correct in ${formatTime(elapsed)}.`;
 
   useEffect(() => {
     if (!started || isDone || selected || !questionStartedAt) return;
@@ -138,39 +148,70 @@ export function DailyQuiz({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [shareOpen]);
 
-  function start() {
-    const now = Date.now();
-    setStarted(true);
-    setStartedAt(now);
-    setQuestionStartedAt(now);
-    setRemainingMs(10000);
+  useEffect(() => {
+    if (!shareOpen) return;
+    shareCloseRef.current?.focus();
+    return () => shareButtonRef.current?.focus();
+  }, [shareOpen]);
+
+  async function start() {
+    setStarting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/quiz-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ challengeId })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.sessionToken) throw new Error(data.error || "Could not start the challenge.");
+
+      const now = Date.now();
+      setSessionToken(data.sessionToken);
+      setStarted(true);
+      setStartedAt(now);
+      setQuestionStartedAt(now);
+      setRemainingMs(10000);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not start the challenge.");
+    } finally {
+      setStarting(false);
+    }
   }
 
-  function choose(choice: string) {
-    if (selected) return;
-    const timeLeft = questionStartedAt ? Math.max(0, 10000 - (Date.now() - questionStartedAt)) : 0;
-    const correct = choice === current.word;
+  async function choose(choice: string) {
+    if (selected || answering || !sessionToken) return;
+    setAnswering(true);
     setSelected(choice || "Time expired");
-    setAnswers((value) => [
-      ...value,
-      {
-        word: current.word,
-        selected: choice || "Time expired",
-        correct: current.word,
-        isCorrect: correct,
-        remainingMs: timeLeft
+    try {
+      const response = await fetch("/api/quiz-session", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selected: choice, sessionToken })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.answer || !data.sessionToken) {
+        throw new Error(data.error || "Could not record that answer.");
       }
-    ]);
-    window.setTimeout(() => {
-      if (index === words.length - 1) {
-        setFinishedAt(Date.now());
-      } else {
-        setIndex((value) => value + 1);
-        setSelected(null);
-        setRemainingMs(10000);
-        setQuestionStartedAt(Date.now());
-      }
-    }, FEEDBACK_DELAY_MS);
+
+      setSessionToken(data.sessionToken);
+      setAnswers((value) => [...value, data.answer]);
+      window.setTimeout(() => {
+        if (data.complete) {
+          setFinishedAt(Date.now());
+        } else {
+          setIndex((value) => value + 1);
+          setSelected(null);
+          setRemainingMs(10000);
+          setQuestionStartedAt(Date.now());
+        }
+        setAnswering(false);
+      }, FEEDBACK_DELAY_MS);
+    } catch (error) {
+      setSelected(null);
+      setSubmitError(error instanceof Error ? error.message : "Could not record that answer.");
+      setAnswering(false);
+    }
   }
 
   async function submitScore() {
@@ -180,7 +221,7 @@ export function DailyQuiz({
       const response = await fetch("/api/leaderboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, score, timeMs: elapsed, challengeId, answers })
+        body: JSON.stringify({ name, challengeId, sessionToken })
       });
 
       if (!response.ok) {
@@ -404,14 +445,15 @@ export function DailyQuiz({
         {!started ? (
           <div className="start-panel">
             <p className="quiz-word start-prompt">Ready for today&apos;s spelling challenge?</p>
-            <button className="primary-button start-button" type="button" onClick={start}>
-              <Play size={18} /> Start today&apos;s quiz
+            <button className="primary-button start-button" type="button" onClick={start} disabled={starting}>
+              <Play size={18} /> {starting ? "Starting..." : "Start today’s quiz"}
             </button>
+            {submitError ? <p className="form-error" role="alert">{submitError}</p> : null}
           </div>
         ) : !isDone ? (
           <>
             <div className="timer-row">
-              <span>Question {index + 1} of 20</span>
+              <span>Question {index + 1} of {words.length}</span>
               <strong aria-live="polite">{Math.ceil(remainingMs / 1000)}s</strong>
             </div>
             <p className="quiz-word">Which spelling is correct?</p>
@@ -425,6 +467,7 @@ export function DailyQuiz({
                     className={`choice ${selected === choice ? "selected" : ""} ${state}`}
                     type="button"
                     onClick={() => choose(choice)}
+                    disabled={Boolean(selected) || answering}
                   >
                     {choice}
                   </button>
@@ -458,6 +501,7 @@ export function DailyQuiz({
                   )}
                 </button>
                 <button
+                  ref={shareButtonRef}
                   className="secondary-button share-icon-button"
                   type="button"
                   onClick={() => setShareOpen(true)}
@@ -478,18 +522,18 @@ export function DailyQuiz({
                 </div>
               </div>
             </div>
-            {submitError ? <p className="form-error">{submitError}</p> : null}
+            {submitError ? <p className="form-error" role="alert">{submitError}</p> : null}
             {shareOpen ? (
               <div className="share-overlay" role="dialog" aria-modal="true" aria-labelledby="share-title">
                 <button className="share-backdrop" type="button" aria-label="Close share dialog" onClick={() => setShareOpen(false)} />
                 <div className="share-modal">
-                  <button className="share-close" type="button" aria-label="Close share dialog" onClick={() => setShareOpen(false)}>
+                  <button ref={shareCloseRef} className="share-close" type="button" aria-label="Close share dialog" onClick={() => setShareOpen(false)}>
                     <X size={22} />
                   </button>
                   <p className="eyebrow">Results</p>
                   <h2 id="share-title">{title}</h2>
                   <p className="share-subtitle">
-                    {score.toFixed(1)}/10 with {correctCount}/20 correct. Bet a friend they score lower.
+                    {score.toFixed(1)}/10 with {correctCount}/{words.length} correct. Bet a friend they score lower.
                   </p>
                   <div className="share-card">
                     <div>

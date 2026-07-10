@@ -37,7 +37,7 @@ function format(ms: number) {
 }
 
 export function ResetCountdown() {
-  const [remaining, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
     const tick = () => setRemaining(nextEasternOneAm() - Date.now());
@@ -46,5 +46,5 @@ export function ResetCountdown() {
     return () => window.clearInterval(timer);
   }, []);
 
-  return <span className="reset-countdown">Ends in {format(remaining)} at 1:00 AM ET</span>;
+  return <span className="reset-countdown">{remaining === null ? "Reset time loading…" : `Ends in ${format(remaining)} at 1:00 AM ET`}</span>;
 }

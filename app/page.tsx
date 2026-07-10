@@ -4,6 +4,9 @@ import { FAQAccordion } from "@/components/faq-accordion";
 import { MissStats } from "@/components/miss-stats";
 import { challengeId, dailyWords } from "@/lib/words";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "TypoFind: Official Free Daily Misspelled Words Quiz Game",
   description:
@@ -13,6 +16,7 @@ export const metadata = {
 export default function HomePage() {
   const words = dailyWords();
   const today = challengeId();
+  const yesterday = challengeId(new Date(Date.now() - 36 * 60 * 60 * 1000));
 
   return (
     <>
@@ -59,7 +63,7 @@ export default function HomePage() {
             <h2>What players missed yesterday.</h2>
           </div>
         </div>
-        <MissStats challengeId={today} />
+        <MissStats challengeId={yesterday} />
       </section>
 
       <section className="container section">

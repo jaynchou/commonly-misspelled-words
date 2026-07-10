@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
 import { addLeaderboardEntry, listLeaderboard } from "@/lib/leaderboard";
 import { totalScore } from "@/lib/scoring";
+import { decodeQuizSession } from "@/lib/quiz-session";
 import { challengeId as currentChallengeId, wordsForChallengeId } from "@/lib/words";
+
+const submittedSessions = new Map<string, number>();
+
+function hasSubmittedSession(id: string) {
+  const now = Date.now();
+  for (const [sessionId, submittedAt] of submittedSessions) {
+    if (now - submittedAt > 2 * 60 * 60 * 1000) submittedSessions.delete(sessionId);
+  }
+  return submittedSessions.has(id);
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,18 +23,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const score = Number(body.score);
-  const timeMs = Number(body.timeMs);
   const challengeId = String(body.challengeId || "");
-  const answers = Array.isArray(body.answers) ? body.answers : [];
-
-  if (!Number.isFinite(score) || score < 0 || score > 10) {
-    return NextResponse.json({ error: "Invalid score." }, { status: 400 });
-  }
-
-  if (!Number.isFinite(timeMs) || timeMs <= 0 || timeMs > 60 * 60 * 1000) {
-    return NextResponse.json({ error: "Invalid time." }, { status: 400 });
-  }
+  const session = decodeQuizSession(String(body.sessionToken || ""));
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(challengeId)) {
     return NextResponse.json({ error: "Invalid challenge." }, { status: 400 });
@@ -33,12 +34,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "This daily challenge is no longer active." }, { status: 409 });
   }
 
+  if (!session || session.challengeId !== challengeId) {
+    return NextResponse.json({ error: "Your verified challenge session is missing or expired." }, { status: 409 });
+  }
+
+  if (hasSubmittedSession(session.id)) {
+    return NextResponse.json({ error: "This challenge session has already been signed." }, { status: 409 });
+  }
+
   const challengeWords = wordsForChallengeId(challengeId);
-  if (answers.length !== challengeWords.length) {
+  if (session.answers.length !== challengeWords.length || session.index !== challengeWords.length) {
     return NextResponse.json({ error: "Incomplete answer sheet." }, { status: 400 });
   }
 
-  const cleanedAnswers = answers.slice(0, 20).map((answer: Record<string, unknown>, index: number) => {
+  const cleanedAnswers = session.answers.map((answer, index) => {
     const expected = challengeWords[index];
     const selected = String(answer.selected || "").slice(0, 60);
     return {
@@ -50,6 +59,7 @@ export async function POST(request: Request) {
     };
   });
   const verifiedScore = totalScore(cleanedAnswers);
+  const timeMs = Math.max(1, Date.now() - session.startedAt);
 
   const entry = await addLeaderboardEntry({
     name: String(body.name || "Anonymous"),
@@ -58,6 +68,7 @@ export async function POST(request: Request) {
     challengeId,
     answers: cleanedAnswers
   });
+  submittedSessions.set(session.id, Date.now());
 
   return NextResponse.json({ entry });
 }

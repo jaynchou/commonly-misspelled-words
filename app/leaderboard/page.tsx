@@ -11,7 +11,7 @@ export default function LeaderboardPage() {
         <span className="eyebrow">Global ranking</span>
         <h1>Typofind leaderboard</h1>
         <p>
-          The global board ranks every signed daily finish by score, then speed. Local development uses a JSON database;
+          The all-time board ranks every signed daily finish by score, then speed. Local development uses a JSON database;
           production uses Supabase when environment variables are configured.
         </p>
       </article>
