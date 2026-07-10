@@ -3,7 +3,7 @@ import { expandedWordBank, wordBank } from "@/lib/words";
 import { StructuredData } from "@/components/structured-data";
 
 export const metadata = {
-  title: "Commonly Misspelled Words",
+  title: "100 Commonly Misspelled Words | TypoFind",
   description: "Top commonly misspelled words, most misspelled words, and a ranked Typofind study list.",
   alternates: { canonical: "/commonly-misspelled-words" }
 };

@@ -1,5 +1,8 @@
+import Link from "next/link";
+import { StructuredData } from "@/components/structured-data";
+
 export const metadata = {
-  title: "How to Play",
+  title: "How to Play TypoFind | Daily Spelling Quiz Rules",
   description:
     "Learn how to play TypoFind, the free daily commonly misspelled words quiz game with 20 questions, four choices, timed scoring, and a daily leaderboard.",
   alternates: { canonical: "/how-to-play" }
@@ -55,6 +58,7 @@ export default function HowToPlayPage() {
           TypoFind is a daily commonly misspelled words quiz. Your job is simple: read the clue, ignore the tempting
           misspellings, and choose the one correct spelling before time runs out.
         </p>
+        <p>Want a little practice first? Start with the <Link href="/commonly-misspelled-words">Top 100 commonly misspelled words</Link>, especially the guides to <Link href="/double-letter-spelling-words">double-letter words</Link> and <Link href="/i-before-e-exceptions">i before e exceptions</Link>.</p>
 
         <h2>Quick start</h2>
         <div className="grid-3 how-grid">
@@ -80,6 +84,7 @@ export default function HowToPlayPage() {
             The clue tells you the meaning, but it does not give away the spelling. In this example, the correct answer
             is the version with double c and double m.
           </p>
+          <p>See more examples in the <Link href="/double-letter-spelling-words">double-letter spelling guide</Link>.</p>
         </div>
 
         <h2>The rules in plain English</h2>
@@ -121,11 +126,11 @@ export default function HowToPlayPage() {
         <div className="grid-3 how-grid">
           <section className="panel how-card">
             <h3>Watch doubled letters</h3>
-            <p>Words like accommodate, occurrence, and committee often trick people because one letter doubles twice.</p>
+            <p>Words like accommodate, occurrence, and committee often trick people because one letter doubles twice. Review the <Link href="/double-letter-spelling-words">full double-letter guide</Link>.</p>
           </section>
           <section className="panel how-card">
             <h3>Slow down on vowels</h3>
-            <p>Many misspellings swap i and e, drop a vowel, or add one extra vowel that looks natural at first glance.</p>
+            <p>Many misspellings swap i and e, drop a vowel, or add one extra vowel that looks natural at first glance. The <Link href="/i-before-e-exceptions">i before e guide</Link> is a useful refresher.</p>
           </section>
           <section className="panel how-card">
             <h3>Trust the clue</h3>
@@ -142,4 +147,3 @@ export default function HowToPlayPage() {
     </section>
   );
 }
-import { StructuredData } from "@/components/structured-data";

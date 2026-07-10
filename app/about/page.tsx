@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { StructuredData } from "@/components/structured-data";
 
 export const metadata: Metadata = {
-  title: "About TypoFind",
+  title: "About Jay and TypoFind | Daily Spelling Quiz",
   description: "Learn about TypoFind, a free daily spelling and proofreading challenge.",
   alternates: { canonical: "/about" }
 };

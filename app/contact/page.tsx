@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact TypoFind",
+  title: "Contact Jay | TypoFind Spelling Quiz",
   description: "Contact TypoFind about spelling content, privacy, or leaderboard support.",
   alternates: { canonical: "/contact" }
 };
